@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Providers } from "@/components/layout/Providers";
+import { ThemeScript } from "@/components/layout/ThemeScript";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,48 +12,30 @@ const inter = Inter({
   display: "swap",
 });
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-heading",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: {
-    default: "ShopVault - Premium Ecommerce Destination",
-    template: "%s | ShopVault",
+    default: "ShopVault OS — Enterprise Commerce Infrastructure",
+    template: "%s | ShopVault OS",
   },
   description:
-    "Discover premium products curated from around the world. Shop the latest trends in electronics, fashion, home & living, beauty, and more.",
-  keywords: [
-    "ecommerce",
-    "shop",
-    "online store",
-    "premium products",
-    "electronics",
-    "fashion",
-  ],
+    "Enterprise Commerce Operating System. AI-powered commerce infrastructure for high-growth retail businesses. Multi-tenant, scalable, and built for enterprise.",
+  keywords: ["ecommerce", "enterprise", "SaaS", "commerce OS", "AI commerce", "multi-tenant"],
   openGraph: {
-    title: "ShopVault - Premium Ecommerce Destination",
-    description:
-      "Discover premium products curated from around the world.",
-    siteName: "ShopVault",
+    title: "ShopVault OS — Enterprise Commerce Infrastructure",
+    description: "Enterprise Commerce Operating System for high-growth retail businesses.",
+    siteName: "ShopVault OS",
     type: "website",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${poppins.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${inter.variable}`} suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased">
         <Providers>
           <Navbar />

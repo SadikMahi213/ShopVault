@@ -1,144 +1,130 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import {
-  Search,
-  ShoppingBag,
-  Heart,
-  User,
-  Menu,
-  X,
-  ChevronDown,
-} from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Search, ShoppingBag, Heart, User, Menu, X, ChevronDown, Moon, Sun, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useCartStore } from "@/lib/store";
+import { useCartStore } from "@/store";
+import { useThemeStore } from "@/store";
+import { useUIStore } from "@/store";
 import { categories } from "@/data/categories";
 import { SearchModal } from "./SearchModal";
 import { CartDrawer } from "./CartDrawer";
 
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/shop", label: "Storefront" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/pricing", label: "Pricing" },
+];
+
 export function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [megaMenuOpen, setMegaMenuOpen] = useState<string | null>(null);
+  const [megaOpen, setMegaOpen] = useState(false);
   const totalItems = useCartStore((s) => s.getTotalItems());
   const toggleCart = useCartStore((s) => s.toggleCart);
+  const { theme, toggleTheme } = useThemeStore();
+  const { mobileMenuOpen, toggleMobileMenu } = useUIStore();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  const isDark = theme === "dark";
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/60 glass">
+      <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${
+        scrolled ? "border-b border-border/60 glass shadow-sm" : "border-transparent"
+      }`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-4">
-            {/* Mobile menu button */}
-            <button
-              className="lg:hidden -ml-2 p-2 text-foreground"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {/* Mobile menu */}
+            <button className="lg:hidden -ml-2 p-2 text-foreground" onClick={toggleMobileMenu} aria-label="Menu">
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 shrink-0">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
+              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
                 <span className="text-white font-bold text-sm">S</span>
               </div>
-              <span className="font-bold text-xl hidden sm:block" style={{ fontFamily: "var(--font-heading)" }}>
-                ShopVault
+              <span className="font-semibold text-lg tracking-tight">
+                ShopVault<span className="text-primary">OS</span>
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Nav */}
             <nav className="hidden lg:flex items-center gap-1">
-              <Link
-                href="/"
-                className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground rounded-lg hover:bg-muted transition-colors"
-              >
-                Home
-              </Link>
-              <div
-                className="relative"
-                onMouseEnter={() => setMegaMenuOpen("shop")}
-                onMouseLeave={() => setMegaMenuOpen(null)}
-              >
+              {navLinks.map((link) => (
                 <Link
-                  href="/shop"
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground rounded-lg hover:bg-muted transition-colors"
+                  key={link.href}
+                  href={link.href}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    pathname === link.href
+                      ? "text-foreground bg-muted"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+                  }`}
                 >
-                  Shop
-                  <ChevronDown className="h-3.5 w-3.5" />
+                  {link.label}
                 </Link>
-                {megaMenuOpen === "shop" && (
-                  <div className="absolute top-full left-0 mt-1 w-[600px] rounded-xl border border-border bg-background shadow-xl p-6 grid grid-cols-3 gap-4 animate-in">
-                    {categories.slice(0, 6).map((cat) => (
-                      <Link
-                        key={cat.id}
-                        href={`/shop?category=${cat.slug}`}
-                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors group"
-                      >
-                        <div className="h-12 w-12 rounded-lg overflow-hidden shrink-0">
-                          <img
-                            src={cat.image}
-                            alt={cat.name}
-                            className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
+              ))}
+              {/* Mega menu trigger */}
+              <div className="relative" onMouseEnter={() => setMegaOpen(true)} onMouseLeave={() => setMegaOpen(false)}>
+                <button className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/60 transition-colors">
+                  Categories <ChevronDown className="h-3.5 w-3.5" />
+                </button>
+                {megaOpen && (
+                  <div className="absolute top-full left-0 mt-1 w-[640px] rounded-xl border border-border bg-card shadow-xl p-5 grid grid-cols-3 gap-3 animate-in">
+                    {categories.map((cat) => (
+                      <Link key={cat.id} href={`/shop?category=${cat.slug}`} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors group">
+                        <div className="h-10 w-10 rounded-lg overflow-hidden shrink-0 bg-muted">
+                          <img src={cat.image} alt={cat.name} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
                         </div>
                         <div>
                           <p className="text-sm font-medium">{cat.name}</p>
-                          <p className="text-xs text-muted-foreground">{cat.productCount} products</p>
+                          <p className="text-[11px] text-muted-foreground">{cat.productCount} products</p>
                         </div>
                       </Link>
                     ))}
                   </div>
                 )}
               </div>
-              <Link
-                href="/about"
-                className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground rounded-lg hover:bg-muted transition-colors"
-              >
-                About
+              <Link href="/account" className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted/60 transition-colors">
+                Account
               </Link>
             </nav>
 
-            {/* Right side actions */}
-            <div className="flex items-center gap-1 sm:gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSearchOpen(true)}
-                aria-label="Search"
-              >
-                <Search className="h-5 w-5" />
+            {/* Actions */}
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={() => setSearchOpen(true)} aria-label="Search" className="hidden sm:inline-flex">
+                <Search className="h-4 w-4" />
               </Button>
-
-              <Link href="/cart">
+              <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
+                {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
+              <Link href="/account/wishlist">
                 <Button variant="ghost" size="icon" aria-label="Wishlist">
-                  <Heart className="h-5 w-5" />
+                  <Heart className="h-4 w-4" />
                 </Button>
               </Link>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleCart}
-                aria-label="Cart"
-                className="relative"
-              >
-                <ShoppingBag className="h-5 w-5" />
+              <Button variant="ghost" size="icon" onClick={toggleCart} aria-label="Cart" className="relative">
+                <ShoppingBag className="h-4 w-4" />
                 {totalItems > 0 && (
-                  <Badge
-                    variant="default"
-                    className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px]"
-                  >
+                  <Badge variant="default" className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[9px]">
                     {totalItems}
                   </Badge>
                 )}
               </Button>
-
-              <Link href="/checkout">
-                <Button variant="ghost" size="icon" aria-label="Account">
-                  <User className="h-5 w-5" />
+              <Link href="/dashboard">
+                <Button variant="ghost" size="icon" aria-label="Dashboard">
+                  <LayoutDashboard className="h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -148,40 +134,20 @@ export function Navbar() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden border-t border-border bg-background animate-in">
-            <div className="px-4 py-4 space-y-1">
-              <Link
-                href="/"
-                className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                href="/shop"
-                className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Shop
-              </Link>
-              <div className="pl-3 space-y-1">
+            <div className="px-4 py-3 space-y-1">
+              {navLinks.map((link) => (
+                <Link key={link.href} href={link.href} className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-muted" onClick={toggleMobileMenu}>
+                  {link.label}
+                </Link>
+              ))}
+              <div className="pt-2 border-t border-border mt-2">
+                <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">Categories</p>
                 {categories.slice(0, 4).map((cat) => (
-                  <Link
-                    key={cat.id}
-                    href={`/shop?category=${cat.slug}`}
-                    className="block px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
+                  <Link key={cat.id} href={`/shop?category=${cat.slug}`} className="block px-3 py-2 text-sm text-muted-foreground hover:text-foreground rounded-lg hover:bg-muted" onClick={toggleMobileMenu}>
                     {cat.name}
                   </Link>
                 ))}
               </div>
-              <Link
-                href="/about"
-                className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                About
-              </Link>
             </div>
           </div>
         )}

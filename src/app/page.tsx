@@ -1,19 +1,19 @@
-import { HeroSection } from "@/components/home/HeroSection";
-import { FeaturedCategories } from "@/components/home/FeaturedCategories";
-import { TrendingProducts } from "@/components/home/TrendingProducts";
-import { FlashSale } from "@/components/home/FlashSale";
-import { Testimonials } from "@/components/home/Testimonials";
-import { Newsletter } from "@/components/home/Newsletter";
+import { EnterpriseHero } from "@/components/landing/EnterpriseHero";
+import { FeatureGrid } from "@/components/landing/FeatureGrid";
+import { PricingSection } from "@/components/landing/PricingSection";
+import { CaseStudies } from "@/components/landing/CaseStudies";
+import { ROICalculator } from "@/components/landing/ROICalculator";
+import { CTASection } from "@/components/landing/CTASection";
 
 export default function HomePage() {
   return (
     <>
-      <HeroSection />
-      <FeaturedCategories />
-      <TrendingProducts />
-      <FlashSale />
-      <Testimonials />
-      <Newsletter />
+      <EnterpriseHero />
+      <FeatureGrid />
+      <CaseStudies />
+      <PricingSection />
+      <ROICalculator />
+      <CTASection />
     </>
   );
 }
