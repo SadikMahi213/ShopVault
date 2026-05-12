@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShopVault - Premium Ecommerce Demo
+
+A modern, production-quality ecommerce frontend built with Next.js 16, TypeScript, Tailwind CSS v4, and shadcn/ui.
+
+## Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| Next.js 16.2 (App Router) | React framework |
+| TypeScript | Type safety |
+| Tailwind CSS v4 | Utility-first styling |
+| shadcn/ui (Radix Primitives) | Accessible UI components |
+| Framer Motion | Animations & transitions |
+| Zustand | Cart/wishlist state management |
+| TanStack Query | Data fetching architecture |
+| Lucide React | Icon library |
+
+## Features
+
+- **Homepage**: Hero with animations, featured categories, trending products, flash sale with countdown, testimonials, newsletter signup
+- **Product System**: Listing with filters, detail page with image gallery, reviews UI
+- **Cart**: Add/remove/update, cart drawer sidebar, persistent state via Zustand
+- **UI/UX**: Responsive navbar with mega menu, search modal, wishlist, skeleton loading, smooth animations
+- **Pages**: Home, Shop (with filters), Product Detail, Cart, Checkout, About
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Production build
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx          # Root layout with fonts & providers
+│   ├── page.tsx            # Homepage
+│   ├── shop/               # Shop listing & product detail
+│   ├── cart/               # Cart page
+│   ├── checkout/           # Checkout UI
+│   └── about/              # About page
+├── components/
+│   ├── ui/                 # shadcn/ui primitives
+│   ├── layout/             # Navbar, Footer, CartDrawer, SearchModal
+│   ├── home/               # Hero, Categories, Products, etc.
+│   └── product/            # ProductCard, Gallery, Info, Reviews
+├── lib/
+│   ├── store.ts            # Zustand stores (cart, wishlist)
+│   └── utils.ts            # Helpers (cn, formatPrice)
+├── data/                   # Mock data (products, categories, testimonials)
+└── types/                  # TypeScript interfaces
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment (Vercel)
 
-## Learn More
+1. Push to GitHub
+2. Import repo in Vercel
+3. Framework: Next.js
+4. Build command: `npm run build`
+5. Output directory: `.next`
+6. No environment variables needed
 
-To learn more about Next.js, take a look at the following resources:
+Or deploy instantly:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyourusername%2Fshopyvault)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design
 
-## Deploy on Vercel
+- **Fonts**: Inter (body), Poppins (headings) via Google Fonts
+- **Colors**: Indigo primary, amber secondary, pink accent
+- **Glassmorphism**: Navbar with backdrop blur
+- **Animations**: Framer Motion for page sections, micro-interactions
+- **Responsive**: Mobile-first, breakpoints at sm/md/lg/xl
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
