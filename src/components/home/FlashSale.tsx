@@ -10,14 +10,16 @@ import { products } from "@/data/products";
 import { motion } from "framer-motion";
 
 function Countdown({ target }: { target: Date }) {
-  const [timeLeft, setTimeLeft] = useState(() => target.getTime() - Date.now());
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(target.getTime() - Date.now());
-    }, 1000);
-    return () => clearInterval(timer);
+    const tick = () => setTimeLeft(target.getTime() - Date.now());
+    const initial = setTimeout(tick, 0);
+    const timer = setInterval(tick, 1000);
+    return () => { clearTimeout(initial); clearInterval(timer); };
   }, [target]);
+
+  if (timeLeft <= 0) return null;
 
   if (timeLeft <= 0) return null;
 
@@ -45,7 +47,14 @@ function Countdown({ target }: { target: Date }) {
 
 export function FlashSale() {
   const saleProducts = products.filter((p) => p.discount).slice(0, 4);
-  const [targetDate] = useState(() => new Date(Date.now() + 24 * 60 * 60 * 1000));
+  const [targetDate, setTargetDate] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTargetDate(new Date(Date.now() + 24 * 60 * 60 * 1000));
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section className="py-16 sm:py-24">
